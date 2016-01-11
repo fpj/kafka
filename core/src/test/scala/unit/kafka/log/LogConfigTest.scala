@@ -61,6 +61,7 @@ class LogConfigTest {
         case LogConfig.CleanupPolicyProp => assertPropertyInvalid(name, "true", "foobar");
         case LogConfig.MinCleanableDirtyRatioProp => assertPropertyInvalid(name, "not_a_number", "-0.1", "1.2")
         case LogConfig.MinInSyncReplicasProp => assertPropertyInvalid(name, "not_a_number", "0", "-1")
+        case LogConfig.CheckExpectedOffsetsProp => assertPropertyInvalid(name, "not_a_boolean")
         case positiveIntProperty => assertPropertyInvalid(name, "not_a_number", "-1")
       }
     })

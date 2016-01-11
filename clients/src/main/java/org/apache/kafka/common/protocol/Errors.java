@@ -48,6 +48,7 @@ import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.apache.kafka.common.errors.UnknownMemberIdException;
 import org.apache.kafka.common.errors.UnknownServerException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
+import org.apache.kafka.common.errors.ExpectedOffsetMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +122,9 @@ public enum Errors {
     GROUP_AUTHORIZATION_FAILED(30,
             new GroupAuthorizationException("Group authorization failed.")),
     CLUSTER_AUTHORIZATION_FAILED(31,
-            new ClusterAuthorizationException("Cluster authorization failed."));
+            new ClusterAuthorizationException("Cluster authorization failed.")),
+    EXPECTED_OFFSET_MISMATCH(32,
+            new ExpectedOffsetMismatchException("Expected offset does not match assigned offset."));
 
     private static final Logger log = LoggerFactory.getLogger(Errors.class);
 

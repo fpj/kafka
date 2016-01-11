@@ -18,9 +18,8 @@
 package kafka.common
 
 import java.nio.ByteBuffer
-
 import kafka.message.InvalidMessageException
-
+import org.apache.kafka.common.errors.ExpectedOffsetMismatchException
 import scala.Predef._
 
 /**
@@ -62,6 +61,7 @@ object ErrorMapping {
   val TopicAuthorizationCode: Short = 29
   val GroupAuthorizationCode: Short = 30
   val ClusterAuthorizationCode: Short = 31
+  val ExpectedOffsetMismatchCode: Short = 32
 
   private val exceptionToCode =
     Map[Class[Throwable], Short](
@@ -84,6 +84,7 @@ object ErrorMapping {
       classOf[MessageSetSizeTooLargeException].asInstanceOf[Class[Throwable]] -> MessageSetSizeTooLargeCode,
       classOf[NotEnoughReplicasException].asInstanceOf[Class[Throwable]] -> NotEnoughReplicasCode,
       classOf[NotEnoughReplicasAfterAppendException].asInstanceOf[Class[Throwable]] -> NotEnoughReplicasAfterAppendCode,
+      classOf[ExpectedOffsetMismatchException].asInstanceOf[Class[Throwable]] -> ExpectedOffsetMismatchCode,
       classOf[TopicAuthorizationException].asInstanceOf[Class[Throwable]] -> TopicAuthorizationCode,
       classOf[GroupAuthorizationException].asInstanceOf[Class[Throwable]] -> GroupAuthorizationCode,
       classOf[ClusterAuthorizationException].asInstanceOf[Class[Throwable]] -> ClusterAuthorizationCode

@@ -327,7 +327,7 @@ class Log(val dir: File,
           val offset = new AtomicLong(nextOffsetMetadata.messageOffset)
           try {
             validMessages = validMessages.validateMessagesAndAssignOffsets(offset, appendInfo.sourceCodec, appendInfo.targetCodec, config
-              .compact)
+              .compact, config.checkExpectedOffsets)
           } catch {
             case e: IOException => throw new KafkaException("Error in validating messages while appending to log '%s'".format(name), e)
           }
