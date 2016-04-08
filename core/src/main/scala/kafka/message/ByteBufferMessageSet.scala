@@ -252,6 +252,7 @@ private class OffsetAssigner(offsets: Seq[Long]) {
  */
 class ByteBufferMessageSet(val buffer: ByteBuffer) extends MessageSet with Logging {
   private var shallowValidByteCount = -1
+  val uniqueProvider: UniqueProvider
 
   private[kafka] def this(compressionCodec: CompressionCodec,
                           offsetCounter: LongRef,
@@ -561,9 +562,9 @@ class ByteBufferMessageSet(val buffer: ByteBuffer) extends MessageSet with Loggi
         throw new InvalidMessageException("Message must have key for deduplication.")
       }
 
-      val id = UniqueProvider.extractId(message.key)
+      val id = uniqueProvider.extractId(message.key)
 
-      if(!UniqueProvider.isUnique(message.key)) {
+      if(!uniqueProvider.isUnique(message.key)) {
         throw new DuplicateException(s"Duplicate message with $id")
       }
       uniqueProvider.add(id)
