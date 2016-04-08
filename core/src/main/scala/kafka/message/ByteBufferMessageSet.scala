@@ -17,17 +17,15 @@
 
 package kafka.message
 
+import kafka.log.LogConfig
 import kafka.utils.{IteratorTemplate, Logging}
 import kafka.common.{KafkaException, LongRef}
 import java.nio.ByteBuffer
 import java.nio.channels._
 import java.io._
 import java.util.ArrayDeque
-import java.util.concurrent.atomic.AtomicLong
 
-import scala.collection.JavaConverters._
-
-import org.apache.kafka.common.errors.InvalidTimestampException
+import org.apache.kafka.common.errors.{DuplicateException, InvalidTimestampException}
 import org.apache.kafka.common.record.TimestampType
 import org.apache.kafka.common.utils.Utils
 
@@ -396,7 +394,8 @@ class ByteBufferMessageSet(val buffer: ByteBuffer) extends MessageSet with Loggi
                                                       compactedTopic: Boolean = false,
                                                       messageFormatVersion: Byte = Message.CurrentMagicValue,
                                                       messageTimestampType: TimestampType,
-                                                      messageTimestampDiffMaxMs: Long): (ByteBufferMessageSet, Boolean) = {
+                                                      messageTimestampDiffMaxMs: Long,
+                                                      dedupEnabled: Boolean): (ByteBufferMessageSet, Boolean) = {
     if (sourceCodec == NoCompressionCodec && targetCodec == NoCompressionCodec) {
       // check the magic value
       if (!isMagicValueInAllWrapperMessages(messageFormatVersion)) {
@@ -556,7 +555,20 @@ class ByteBufferMessageSet(val buffer: ByteBuffer) extends MessageSet with Loggi
     this
   }
 
-  private def validateMessageKey(message: Message, compactedTopic: Boolean) {
+  private def validateMessageKey(message: Message, compactedTopic: Boolean, dedupEnabled: Boolean) {
+    if(dedupEnabled) {
+      if(!message.hasKey) {
+        throw new InvalidMessageException("Message must have key for deduplication.")
+      }
+
+      val id = UniqueProvider.extractId(message.key)
+
+      if(!UniqueProvider.isUnique(message.key)) {
+        throw new DuplicateException(s"Duplicate message with $id")
+      }
+      uniqueProvider.add(id)
+    }
+
     if (compactedTopic && !message.hasKey)
       throw new InvalidMessageException("Compacted topic cannot accept message without key.")
   }

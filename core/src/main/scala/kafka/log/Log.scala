@@ -342,7 +342,8 @@ class Log(val dir: File,
                                                            config.compact,
                                                            config.messageFormatVersion.messageFormatVersion,
                                                            config.messageTimestampType,
-                                                           config.messageTimestampDifferenceMaxMs)
+                                                           config.messageTimestampDifferenceMaxMs,
+                                                           config.dedupEnabled)
           } catch {
             case e: IOException => throw new KafkaException("Error in validating messages while appending to log '%s'".format(name), e)
           }
