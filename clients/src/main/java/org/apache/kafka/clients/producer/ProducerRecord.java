@@ -32,6 +32,11 @@ package org.apache.kafka.clients.producer;
  * the timestamp in the producer record will be overwritten by the broker with the broker local time when it appends the
  * message to its log.
  * </li>
+ * <li>
+ * If the application wants its messages to be deduplicated, then it needs to provide a sequence number. The sequence
+ * number enables brokers to spot duplicates globally by comparing the sequence number. The guarantee here only holds
+ * for the current instance of the producer. The guarantee is not necessarily satisfied across producer instances.
+ * </li>
  * <p>
  * In either of the cases above, the timestamp that has actually been used will be returned to user in
  * {@link RecordMetadata}
@@ -43,6 +48,7 @@ public final class ProducerRecord<K, V> {
     private final K key;
     private final V value;
     private final Long timestamp;
+    private final long seqNumber;
 
     /**
      * Creates a record with a specified timestamp to be sent to a specified topic and partition
@@ -52,8 +58,9 @@ public final class ProducerRecord<K, V> {
      * @param timestamp The timestamp of the record
      * @param key The key that will be included in the record
      * @param value The record contents
+     * @param seqNumber The sequence number according to the application, -1 ignores it
      */
-    public ProducerRecord(String topic, Integer partition, Long timestamp, K key, V value) {
+    public ProducerRecord(String topic, Integer partition, Long timestamp, K key, V value, long seqNumber) {
         if (topic == null)
             throw new IllegalArgumentException("Topic cannot be null");
         if (timestamp != null && timestamp < 0)
@@ -63,6 +70,7 @@ public final class ProducerRecord<K, V> {
         this.key = key;
         this.value = value;
         this.timestamp = timestamp;
+        this.seqNumber = seqNumber;
     }
 
     /**
@@ -74,7 +82,7 @@ public final class ProducerRecord<K, V> {
      * @param value The record contents
      */
     public ProducerRecord(String topic, Integer partition, K key, V value) {
-        this(topic, partition, null, key, value);
+        this(topic, partition, null, key, value, -1);
     }
 
     /**
@@ -85,7 +93,7 @@ public final class ProducerRecord<K, V> {
      * @param value The record contents
      */
     public ProducerRecord(String topic, K key, V value) {
-        this(topic, null, null, key, value);
+        this(topic, null, null, key, value, -1);
     }
 
     /**
@@ -95,7 +103,7 @@ public final class ProducerRecord<K, V> {
      * @param value The record contents
      */
     public ProducerRecord(String topic, V value) {
-        this(topic, null, null, null, value);
+        this(topic, null, null, null, value, -1);
     }
 
     /**
