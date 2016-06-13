@@ -34,6 +34,21 @@ import org.apache.kafka.common.MetricName;
  */
 public interface Producer<K, V> extends Closeable {
 
+
+    /**
+     * Initializes a session for this producer instance so that
+     * internal retries are idempotent. The application is supposed
+     * to persist the session identifier it returns so that it can
+     * be used to restore the session for recovery.
+     *
+     * If the session is being initialized for the first time, then
+     * we pass null as the id parameter.
+     *
+     * @param handle
+     * @return sessionHandle
+     */
+    public SessionHandle initializeSession(SessionHandle handle);
+
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
      * 

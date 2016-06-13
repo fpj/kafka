@@ -43,6 +43,7 @@ public final class ProducerRecord<K, V> {
     private final K key;
     private final V value;
     private final Long timestamp;
+    private final byte[] appState;
 
     /**
      * Creates a record with a specified timestamp to be sent to a specified topic and partition
@@ -52,8 +53,9 @@ public final class ProducerRecord<K, V> {
      * @param timestamp The timestamp of the record
      * @param key The key that will be included in the record
      * @param value The record contents
+     * @param appState A byte array containing some state the application needs to resume upon recovery
      */
-    public ProducerRecord(String topic, Integer partition, Long timestamp, K key, V value) {
+    public ProducerRecord(String topic, Integer partition, Long timestamp, K key, V value, byte[] appState) {
         if (topic == null)
             throw new IllegalArgumentException("Topic cannot be null");
         if (timestamp != null && timestamp < 0)
@@ -63,6 +65,20 @@ public final class ProducerRecord<K, V> {
         this.key = key;
         this.value = value;
         this.timestamp = timestamp;
+        this.appState = appState;
+    }
+
+    /**
+     * Creates a record with a specified timestamp to be sent to a specified topic and partition
+     *
+     * @param topic The topic the record will be appended to
+     * @param partition The partition to which the record should be sent
+     * @param timestamp The timestamp of the record
+     * @param key The key that will be included in the record
+     * @param value The record contents
+     */
+    public ProducerRecord(String topic, Integer partition, Long timestamp, K key, V value) {
+        this(topic, partition, timestamp, key, value, null);
     }
 
     /**
