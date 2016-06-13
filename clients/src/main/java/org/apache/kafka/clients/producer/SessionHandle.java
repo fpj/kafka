@@ -49,12 +49,20 @@ public class SessionHandle {
      * Serializes this object and return the bytes so that the
      * application can persist it.
      *
-     * @return
+     * @return Serialized version of this object.
      */
     public byte[] getBytes() {
         return new byte[0];
     }
 
+    /**
+     * Returns the bytes that the application needs to use to
+     * initialize its state upon restart, e.g., these bytes
+     * when deserialized can represent the set of input offsets
+     * that this application needs to use upon recovery.
+     *
+     * @return Application state bytes
+     */
     public byte[] getInitialAppState() {
         return appState;
     }
