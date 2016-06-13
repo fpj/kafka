@@ -40,9 +40,10 @@ public final class RecordMetadata {
     private final int serializedKeySize;
     private final int serializedValueSize;
     private final TopicPartition topicPartition;
+    private final ProducerState producerState;
 
     private RecordMetadata(TopicPartition topicPartition, long offset, long timestamp, long
-        checksum, int serializedKeySize, int serializedValueSize) {
+        checksum, int serializedKeySize, int serializedValueSize, ProducerState producerState) {
         super();
         this.offset = offset;
         this.timestamp = timestamp;
@@ -50,6 +51,7 @@ public final class RecordMetadata {
         this.serializedKeySize = serializedKeySize;
         this.serializedValueSize = serializedValueSize;
         this.topicPartition = topicPartition;
+        this.producerState = producerState;
     }
 
     @Deprecated
@@ -62,7 +64,7 @@ public final class RecordMetadata {
         // ignore the relativeOffset if the base offset is -1,
         // since this indicates the offset is unknown
         this(topicPartition, baseOffset == -1 ? baseOffset : baseOffset + relativeOffset,
-             timestamp, checksum, serializedKeySize, serializedValueSize);
+             timestamp, checksum, serializedKeySize, serializedValueSize, null);
     }
 
     /**

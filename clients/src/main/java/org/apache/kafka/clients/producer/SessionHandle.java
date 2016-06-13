@@ -27,7 +27,7 @@ public class SessionHandle {
      * @param pid
      */
     SessionHandle(long pid) {
-        this(appState, null);
+        this(pid, null);
     }
 
     SessionHandle(long pid, byte[] appState) {
