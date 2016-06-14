@@ -30,6 +30,16 @@ public class SessionHandle {
         this(pid, null);
     }
 
+    /**
+     * If the application is restarting and the producer needs
+     * to pass the last successfully snapshotted state to the
+     * application, then we need to use this constructor. The
+     * application obtain its application state for initialization
+     * via the session handle.
+     *
+     * @param pid
+     * @param appState
+     */
     SessionHandle(long pid, byte[] appState) {
         this.pid = pid;
         this.appState = appState;
