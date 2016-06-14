@@ -40,7 +40,6 @@ public interface Producer<K, V> extends Closeable {
      * interested in the session living across instances, it needs to get it
      * and persist it.
      *
-     * @param id
      * @return A session id so that the application can ruse upon recovery.
      */
     public SessionId getSession();
