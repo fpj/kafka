@@ -48,6 +48,13 @@ public interface Producer<K, V> extends Closeable {
     public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback);
 
     /**
+     * All messages sent after this begin call are either produced atomically upon a call to commit
+     * or discarded upon a call to abort.
+     *
+     */
+    public void begin();
+
+    /**
      * Commits all messages that have been sent since the last commit.
      *
      * @return A future which will eventually contain the result of the operation.
