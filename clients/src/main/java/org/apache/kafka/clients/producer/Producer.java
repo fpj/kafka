@@ -19,7 +19,6 @@ package org.apache.kafka.clients.producer;
 import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -49,12 +48,26 @@ public interface Producer<K, V> extends Closeable {
     public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback);
 
     /**
+     * Upon intialization, the application to obtain the state it used with the last successful
+     * snapshot.
+     *
+     * @return Bytes corresponding to the application state that was last successfully snapshotted.
+     */
+    public byte[] getAppState();
+
+    /**
      * Send atomically all records in the set. If any message fails, then the whole batch fails.
      *
-     * @param callback A callback object to be invoked upon completion.
+     * @param appState Byte array corresponding to the serialized version of the application state
+     *                 necessary for recovery.
      * @return A future which will eventually contain the response for each message
      */
-    public Future<Set<RecordMetadata>> atomicSend(Set<ProducerRecord<K, V>> records, Callback callback);
+    public Future snapshot(byte[] appState);
+
+    /**
+     * Aborts any sent messages that haven't been committed or aborted.
+     */
+    public Future abort();
 
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
