@@ -47,7 +47,7 @@ public interface Producer<K, V> extends Closeable {
      * @param handle
      * @return sessionHandle
      */
-    public SessionHandle initializeSession(SessionHandle handle);
+    public SessionHandle initializeSession(SessionHandle handle, ProducerState state);
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.

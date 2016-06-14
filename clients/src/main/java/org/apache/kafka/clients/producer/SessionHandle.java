@@ -31,20 +31,6 @@ public class SessionHandle {
     }
 
     /**
-     * If the application is restarting and the producer needs
-     * to pass the last successfully snapshotted state to the
-     * application, then we need to use this constructor. The
-     * application obtain its application state for initialization
-     * via the session handle.
-     *
-     * @param pid
-     * @param appState
-     */
-    SessionHandle(long pid, byte[] appState) {
-        this.pid = pid;
-        this.appState = appState;
-    }
-    /**
      * An application call this constructor passing the bytes
      * it persisted upon the last time this session was
      * initialized.
@@ -63,18 +49,6 @@ public class SessionHandle {
      */
     public byte[] getBytes() {
         return new byte[0];
-    }
-
-    /**
-     * Returns the bytes that the application needs to use to
-     * initialize its state upon restart, e.g., these bytes
-     * when deserialized can represent the set of input offsets
-     * that this application needs to use upon recovery.
-     *
-     * @return Application state bytes
-     */
-    public byte[] getInitialAppState() {
-        return appState;
     }
 
     private void restore(byte[] idBytes) {
