@@ -26,9 +26,7 @@ public class SessionHandle {
      *
      * @param pid
      */
-    SessionHandle(long pid) {
-        this(appState, null);
-    }
+    SessionHandle(long pid) { this(pid, null); }
 
     SessionHandle(long pid, byte[] appState) {
         this.pid = pid;
@@ -51,9 +49,7 @@ public class SessionHandle {
      *
      * @return Serialized version of this object.
      */
-    public byte[] getBytes() {
-        return new byte[0];
-    }
+    public byte[] getBytes() { return new byte[0]; }
 
     /**
      * Returns the bytes that the application needs to use to
@@ -63,11 +59,9 @@ public class SessionHandle {
      *
      * @return Application state bytes
      */
-    public byte[] getInitialAppState() {
-        return appState;
-    }
+    public byte[] getInitialAppState() { return appState; }
 
     private void restore(byte[] idBytes) {
-        // extract pid
+        // extract pid and appstate
     }
 }
