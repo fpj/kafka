@@ -62,7 +62,7 @@ public interface Producer<K, V> extends Closeable {
      *                 necessary for recovery.
      * @return A future which will eventually contain the response for each message
      */
-    public Future snapshot(byte[] appState);
+    public Future<SnapshotRecord> snapshot(byte[] appState);
 
     /**
      * Aborts any sent messages that haven't been committed or aborted.
