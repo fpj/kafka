@@ -36,18 +36,13 @@ public interface Producer<K, V> extends Closeable {
 
 
     /**
-     * Initializes a session for this producer instance so that
-     * internal retries are idempotent. The application is supposed
-     * to persist the session identifier it returns so that it can
-     * be used to restore the session for recovery.
+     * The session is initialized always upon construction and
+     * it is up to the application to make use of it. It gets
+     * the handle via this call.
      *
-     * If the session is being initialized for the first time, then
-     * we pass null as the id parameter.
-     *
-     * @param handle
-     * @return sessionHandle
+     * @return Session handle to persist and obtain initial app state.
      */
-    public SessionHandle initializeSession(SessionHandle handle);
+    public SessionHandle getSessionHandle();
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
