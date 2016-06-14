@@ -48,24 +48,16 @@ public interface Producer<K, V> extends Closeable {
     public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback);
 
     /**
-     * Upon intialization, the application to obtain the state it used with the last successful
-     * snapshot.
+     * Commits all messages that have been sent since the last commit.
      *
-     * @return Bytes corresponding to the application state that was last successfully snapshotted.
+     * @return A future which will eventually contain the result of the operation.
      */
-    public byte[] getAppState();
-
-    /**
-     * Send atomically all records in the set. If any message fails, then the whole batch fails.
-     *
-     * @param appState Byte array corresponding to the serialized version of the application state
-     *                 necessary for recovery.
-     * @return A future which will eventually contain the response for each message
-     */
-    public Future snapshot(byte[] appState);
+    public Future commit();
 
     /**
      * Aborts any sent messages that haven't been committed or aborted.
+     *
+     * @return A future which will eventually contain the result of the operation.
      */
     public Future abort();
 
