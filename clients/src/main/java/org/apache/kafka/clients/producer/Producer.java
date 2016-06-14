@@ -52,14 +52,14 @@ public interface Producer<K, V> extends Closeable {
      *
      * @return A future which will eventually contain the result of the operation.
      */
-    public Future commit();
+    public Future<TxnRecord> commit();
 
     /**
      * Aborts any sent messages that haven't been committed or aborted.
      *
      * @return A future which will eventually contain the result of the operation.
      */
-    public Future abort();
+    public Future<TxnRecord> abort();
 
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
