@@ -44,8 +44,9 @@ public interface Producer<K, V> extends Closeable {
      * If the session is being initialized for the first time, then
      * we pass null as the id parameter.
      *
-     * @param handle
-     * @return sessionHandle
+     * @param handle Session handle the application persisted for recovery
+     * @param state  Producer state the application persisted for recovery
+     * @return A new session handle instance
      */
     public SessionHandle initializeSession(SessionHandle handle, ProducerState state);
 
