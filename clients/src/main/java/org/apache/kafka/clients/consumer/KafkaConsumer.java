@@ -963,6 +963,36 @@ public class KafkaConsumer<K, V> implements Consumer<K, V> {
     }
 
     /**
+     * Fetch data for the topics or partitions specified using one of the subscribe/assign APIs. It is an error to not have
+     * subscribed to any topics or partitions before polling for data.
+     * <p>
+     * On each poll, consumer will try to use the last consumed offset as the starting offset and fetch sequentially. The last
+     * consumed offset can be manually set through {@link #seek(TopicPartition, long)} or automatically set as the last committed
+     * offset for the subscribed list of partitions.
+     *
+     * The readUncommitted parameter controls whether the consumer can receive tentative messages rather than only committed
+     * messages. Committed vs. uncommitted messages only matter in the case at least one producer for the topic produces
+     * messages atomically.
+     *
+     *
+     * @param timeout The time, in milliseconds, spent waiting in poll if data is not available in the buffer.
+     *            If 0, returns immediately with any records that are available currently in the buffer, else returns empty.
+     *            Must not be negative.
+     * @return map of topic to records since the last fetch for the subscribed list of topics and partitions
+     *
+     * @throws org.apache.kafka.clients.consumer.InvalidOffsetException if the offset for a partition or set of
+     *             partitions is undefined or out of range and no offset reset policy has been configured
+     * @throws org.apache.kafka.common.errors.WakeupException if {@link #wakeup()} is called before or while this
+     *             function is called
+     * @throws org.apache.kafka.common.errors.AuthorizationException if caller does Read access to any of the subscribed
+     *             topics or to the configured groupId
+     * @throws org.apache.kafka.common.KafkaException for any other unrecoverable errors (e.g. invalid groupId or
+     *             session timeout, errors deserializing key/value pairs, or any new error cases in future versions)
+     */
+    @Override
+    public ConsumerRecords<K, V> poll(long timeout, boolean readUncommitted) { return null; }
+
+    /**
      * Do one round of polling. In addition to checking for new data, this does any needed
      * heart-beating, auto-commits, and offset updates.
      * @param timeout The maximum time to block in the underlying poll
