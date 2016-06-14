@@ -19,6 +19,7 @@ package org.apache.kafka.clients.producer;
 import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -46,7 +47,15 @@ public interface Producer<K, V> extends Closeable {
      * Send a record and invoke the given callback when the record has been acknowledged by the server
      */
     public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback);
-    
+
+    /**
+     * Send atomically all records in the set. If any message fails, then the whole batch fails.
+     *
+     * @param callback A callback object to be invoked upon completion.
+     * @return A future which will eventually contain the response for each message
+     */
+    public Future<Set<RecordMetadata>> atomicSend(Set<ProducerRecord<K, V>> records, Callback callback);
+
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
      */
