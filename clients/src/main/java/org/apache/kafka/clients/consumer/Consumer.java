@@ -73,7 +73,7 @@ public interface Consumer<K, V> extends Closeable {
     /**
      * @see KafkaConsumer#poll(long, boolean)
      */
-    public ConsumerRecords<K, V> poll(long timeout, boolean readUncommitted);
+    public ConsumerRecords<K, V> poll(long timeout, boolean stableOnly);
 
     /**
      * @see KafkaConsumer#commitSync()
