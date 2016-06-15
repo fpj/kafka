@@ -18,7 +18,6 @@ package org.apache.kafka.clients.producer;
 
 public class SessionHandle {
     private long pid;
-    private byte[] appState;
 
     /**
      *  A producer instance calls this constructor to contain
