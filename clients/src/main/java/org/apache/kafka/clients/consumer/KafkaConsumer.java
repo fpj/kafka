@@ -978,6 +978,8 @@ public class KafkaConsumer<K, V> implements Consumer<K, V> {
      * @param timeout The time, in milliseconds, spent waiting in poll if data is not available in the buffer.
      *            If 0, returns immediately with any records that are available currently in the buffer, else returns empty.
      *            Must not be negative.
+     * @param stableOnly Return only stable messages in the case producers are using commits.
+     *                   
      * @return map of topic to records since the last fetch for the subscribed list of topics and partitions
      *
      * @throws org.apache.kafka.clients.consumer.InvalidOffsetException if the offset for a partition or set of
@@ -990,7 +992,7 @@ public class KafkaConsumer<K, V> implements Consumer<K, V> {
      *             session timeout, errors deserializing key/value pairs, or any new error cases in future versions)
      */
     @Override
-    public ConsumerRecords<K, V> poll(long timeout, boolean readUncommitted) { return null; }
+    public ConsumerRecords<K, V> poll(long timeout, boolean stableOnly) { return null; }
 
     /**
      * Do one round of polling. In addition to checking for new data, this does any needed
