@@ -44,6 +44,9 @@ public interface Producer<K, V> extends Closeable {
      * If the session is being initialized for the first time, then
      * we pass null as the id parameter.
      *
+     * This method can be called multiple times to have multiple sessions
+     * executed by this producer instance.
+     *
      * @param handle
      * @return sessionHandle
      */

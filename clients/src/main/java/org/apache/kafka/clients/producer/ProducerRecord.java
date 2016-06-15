@@ -43,6 +43,7 @@ public final class ProducerRecord<K, V> {
     private final K key;
     private final V value;
     private final Long timestamp;
+    private final SessionHandle session;
     private final byte[] appState;
 
     /**
@@ -53,9 +54,16 @@ public final class ProducerRecord<K, V> {
      * @param timestamp The timestamp of the record
      * @param key The key that will be included in the record
      * @param value The record contents
+     * @param session Determines which session to use for this record
      * @param appState A byte array containing some state the application needs to resume upon recovery
      */
-    public ProducerRecord(String topic, Integer partition, Long timestamp, K key, V value, byte[] appState) {
+    public ProducerRecord(String topic,
+                          Integer partition,
+                          Long timestamp,
+                          K key,
+                          V value,
+                          SessionHandle session,
+                          byte[] appState) {
         if (topic == null)
             throw new IllegalArgumentException("Topic cannot be null");
         if (timestamp != null && timestamp < 0)
@@ -65,6 +73,7 @@ public final class ProducerRecord<K, V> {
         this.key = key;
         this.value = value;
         this.timestamp = timestamp;
+        this.session = session;
         this.appState = appState;
     }
 
