@@ -19,6 +19,7 @@ package org.apache.kafka.clients.producer;
 import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -56,13 +57,13 @@ public interface Producer<K, V> extends Closeable {
     public byte[] getAppState();
 
     /**
-     * Send atomically all records in the set. If any message fails, then the whole batch fails.
+     * Send atomically all records in the set and commits it along with the application state to form a snapshot.
      *
      * @param appState Byte array corresponding to the serialized version of the application state
      *                 necessary for recovery.
      * @return A future which will eventually contain the response for each message
      */
-    public Future<SnapshotRecord> snapshot(byte[] appState);
+    public Future<Set<RecordMetadata>> snapshot(Set<ProducerRecord<K, V>> records, byte[] appState);
 
     /**
      * Aborts any sent messages that haven't been committed or aborted.
