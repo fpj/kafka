@@ -34,8 +34,7 @@ package org.apache.kafka.clients.producer;
  * </li>
  * <li>
  * If the application wants its messages to be deduplicated, then it needs to provide a sequence number. The sequence
- * number enables brokers to spot duplicates globally by comparing the sequence number. The guarantee here only holds
- * for the current instance of the producer. The guarantee is not necessarily satisfied across producer instances.
+ * number enables brokers to spot duplicates globally by comparing the sequence number.
  * </li>
  * <p>
  * In either of the cases above, the timestamp that has actually been used will be returned to user in
