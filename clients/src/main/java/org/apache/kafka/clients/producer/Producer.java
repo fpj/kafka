@@ -71,6 +71,13 @@ public interface Producer<K, V> extends Closeable {
     public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback);
 
     /**
+     * Begin a new set of messages that are to be produced atomically
+     *
+     * @param callback Invoked when the begin completes
+     */
+    public void begin(Callback callback);
+
+    /**
      * Commit the last set of produced messages
      *
      * @param callback Invoked when the commit completes
