@@ -75,7 +75,7 @@ public interface Producer<K, V> extends Closeable {
      *
      * @param callback Invoked when the commit completes
      */
-    public void commit(Callback callback);
+    public void commit(CommitCallback callback);
 
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
