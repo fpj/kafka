@@ -56,7 +56,7 @@ public interface Producer<K, V> extends Closeable {
      * @return A future that eventually returns and updated
      *         ProducerIdentifier instance.
      */
-    public Future<ProducerIdentifier> initPid(ProducerIdentifier pid, Callback cb);
+    public Future<ProducerIdentifier> initPid(ProducerIdentifier pid, CommitCallback cb);
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
