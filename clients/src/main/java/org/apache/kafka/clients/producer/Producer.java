@@ -71,7 +71,9 @@ public interface Producer<K, V> extends Closeable {
     public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback);
 
     /**
-     * Send a record and invoke the given callback when the record has been acknowledged by the server
+     * Commit the last set of produced messages
+     *
+     * @param callback Invoked when the commit completes
      */
     public void commit(Callback callback);
 
