@@ -53,9 +53,10 @@ public interface Producer<K, V> extends Closeable {
      *                state to resume from a consistent state.
      * @param cb A callback to notify the application that recovery
      *           has finished.
-     * @return An updated ProducerIdentifier instance.
+     * @return A future that eventually returns an updated
+     *         ProducerIdentifier instance.
      */
-    ProducerIdentifier initPid(ProducerIdentifier pid, Callback cb);
+    public Future<ProducerIdentifier> initPid(ProducerIdentifier pid, CommitCallback cb);
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
@@ -74,15 +75,17 @@ public interface Producer<K, V> extends Closeable {
      * Begin a new set of messages that are to be produced atomically
      *
      * @param callback Invoked when the begin completes
+     * @return A future to indicate when the operation is complete
      */
-    public void begin(CommitCallback callback);
+    public Future begin(CommitCallback callback);
 
     /**
      * Commit the last set of produced messages
      *
      * @param callback Invoked when the commit completes
+     * @return A future to indicate when the operation is complete
      */
-    public void commit(CommitCallback callback);
+    public Future commit(CommitCallback callback);
 
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
