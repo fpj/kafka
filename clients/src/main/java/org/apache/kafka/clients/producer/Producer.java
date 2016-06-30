@@ -35,6 +35,29 @@ import org.apache.kafka.common.MetricName;
 public interface Producer<K, V> extends Closeable {
 
     /**
+     * Recovers the state of a given Producer ID if the pid object
+     * is not null. If it is null, then assigns a new identifier.
+     *
+     * The producer identifier enables the producer instance to
+     * recover all necessary state to both deduplicate messages
+     * and finish incomplete commits. We can have an incomplete
+     * commit in the case the application has crashed and needs
+     * to restart.
+     *
+     * In the case the application is interested in the only-once
+     * guarantee and it has pending commits, it must call this
+     * method with the appropriate pid before resuming its regular
+     * execution.
+     *
+     * @param pid Enables the producer to recover any necessary
+     *                state to resume from a consistent state.
+     * @param cb A callback to notify the application that recovery
+     *           has finished.
+     * @return An updated ProducerIdentifier instance.
+     */
+    ProducerIdentifier initPid(ProducerIdentifier pid, Callback cb);
+
+    /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
      * 
      * @param record The record to send
@@ -46,7 +69,12 @@ public interface Producer<K, V> extends Closeable {
      * Send a record and invoke the given callback when the record has been acknowledged by the server
      */
     public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback);
-    
+
+    /**
+     * Send a record and invoke the given callback when the record has been acknowledged by the server
+     */
+    public void commit(Callback callback);
+
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
      */

@@ -46,9 +46,19 @@ public interface Consumer<K, V> extends Closeable {
     public void subscribe(Collection<String> topics);
 
     /**
+     * @see KafkaConsumer#subscribe(Collection, boolean)
+     */
+    public void subscribe(Collection<String> topics, boolean stableOnly);
+
+    /**
      * @see KafkaConsumer#subscribe(Collection, ConsumerRebalanceListener)
      */
     public void subscribe(Collection<String> topics, ConsumerRebalanceListener callback);
+
+    /**
+     * @see KafkaConsumer#subscribe(Collection, ConsumerRebalanceListener, boolean)
+     */
+    public void subscribe(Collection<String> topics, ConsumerRebalanceListener callback, boolean stableOnly);
 
     /**
      * @see KafkaConsumer#assign(Collection)
@@ -59,6 +69,11 @@ public interface Consumer<K, V> extends Closeable {
     * @see KafkaConsumer#subscribe(Pattern, ConsumerRebalanceListener)
     */
     public void subscribe(Pattern pattern, ConsumerRebalanceListener callback);
+
+    /**
+     * @see KafkaConsumer#subscribe(Pattern, ConsumerRebalanceListener, boolean)
+     */
+    public void subscribe(Pattern pattern, ConsumerRebalanceListener callback, boolean stableOnly);
 
     /**
      * @see KafkaConsumer#unsubscribe()
