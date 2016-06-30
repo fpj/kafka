@@ -55,7 +55,7 @@ public interface Producer<K, V> extends Closeable {
      *           has finished.
      * @return An updated ProducerIdentifier instance.
      */
-    ProducerIdentifier initPid(ProducerIdentifier pid, Callback cb);
+    ProducerIdentifier initPid(ProducerIdentifier pid, RecoveryCallback cb);
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
@@ -71,18 +71,11 @@ public interface Producer<K, V> extends Closeable {
     public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback);
 
     /**
-     * Begin a new set of messages that are to be produced atomically
-     *
-     * @param callback Invoked when the begin completes
-     */
-    public void begin(Callback callback);
-
-    /**
      * Commit the last set of produced messages
      *
-     * @param callback Invoked when the commit completes
+     * @param callback Invoked when the snapshot completes
      */
-    public void commit(Callback callback);
+    public void snapshot(byte[] recoveryState, SnapshotCallback callback);
 
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
