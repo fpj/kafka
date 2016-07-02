@@ -53,9 +53,10 @@ public interface Producer<K, V> extends Closeable {
      *                state to resume from a consistent state.
      * @param cb A callback to notify the application that recovery
      *           has finished.
-     * @return An updated ProducerIdentifier instance.
+     * @return A future that eventually returns an updated
+     *         ProducerIdentifier instance.
      */
-    ProducerIdentifier initPid(ProducerIdentifier pid, RecoveryCallback cb);
+    public Future<String> initPid(String pid, CommitCallback cb);
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
