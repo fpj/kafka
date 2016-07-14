@@ -17,12 +17,12 @@
 package org.apache.kafka.clients.producer;
 
 
-public interface CommitCallback {
+public interface CompletionCallback<R> {
     /**
      * Invoked when the commit operation completes. In the case of
      * an error, returns an exception.
      *
      * @param e
      */
-    void onCompletion(Exception e);
+    void onCompletion(Exception e, R result);
 }

@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.MetricName;
+import org.apache.kafka.common.TopicPartition;
 
 
 /**
@@ -56,7 +57,7 @@ public interface Producer<K, V> extends Closeable {
      * @return A future that eventually returns and updated
      *         ProducerIdentifier instance.
      */
-    public Future<String> initPid(String pid, CommitCallback cb);
+    public Future<String> initPid(String pid, CompletionCallback<Void> cb);
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
@@ -72,12 +73,32 @@ public interface Producer<K, V> extends Closeable {
     public Future<RecordMetadata> send(ProducerRecord<K, V> record, Callback callback);
 
     /**
-     * Commit the last set of produced messages
+     * Start a new set of messages to commit. All calls to send through this producer instance
+     * are considered to be part of this commit set. We close the commit set once the application
+     * calls endCommit.
      *
-     * @param callback Invoked when the commit completes
+     * @param callback Invoked when the initialization of the batch completes
      * @return A future to indicate when the operations is complete.
      */
-    public Future commit(CommitCallback callback);
+    public Future<Void> beginCommit(CompletionCallback<Void> callback);
+
+    /**
+     * Commit the last set of produced messages.
+     *
+     * @param callback Invoked when the commit completes
+     * @return A future to indicate when the operations completes.
+     */
+    public Future<Void> endCommit(CompletionCallback<Void> callback);
+
+    /**
+     * Aborts the current set of messages to commit. The messages that have been
+     * successfully produced won't be delivered to consumers that set the commit
+     * mode to COMMITTED.
+     *
+     * @param callback Invoked when the abort operation completes
+     * @return A future to indicate when the operation completes.
+     */
+    public Future<Void> abortCommit(CompletionCallback<Void> callback);
 
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.

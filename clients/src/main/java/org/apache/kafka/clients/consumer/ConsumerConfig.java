@@ -187,6 +187,13 @@ public class ConsumerConfig extends AbstractConfig {
     private static final String EXCLUDE_INTERNAL_TOPICS_DOC = "Whether records from internal topics (such as offsets) should be exposed to the consumer. "
                                                             + "If set to <code>true</code> the only way to receive records from an internal topic is subscribing to it.";
     public static final boolean DEFAULT_EXCLUDE_INTERNAL_TOPICS = true;
+
+    /** <code>commit.mode</code> */
+    public static final String COMMIT_MODE_CONFIG = "consume.commit.mode";
+    private static final String COMMIT_MODE_DOC = "Reads only committed messages or all messages. The options available are COMMITTED and ALL. "
+                                                        + "COMMITTED returns messages that have been committed and non-transactional messages. "
+                                                        + "ALL returns all messages, including messages that are part of aborted transactions."
+
     
     static {
         CONFIG = new ConfigDef().define(BOOTSTRAP_SERVERS_CONFIG,
@@ -337,6 +344,11 @@ public class ConsumerConfig extends AbstractConfig {
                                         DEFAULT_EXCLUDE_INTERNAL_TOPICS,
                                         Importance.MEDIUM,
                                         EXCLUDE_INTERNAL_TOPICS_DOC)
+                                .define(COMMIT_MODE_CONFIG,
+                                        Type.STRING,
+                                        "COMMITTED",
+                                        Importance.HIGH,
+                                        COMMIT_MODE_DOC)
 
                                 // security support
                                 .define(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
