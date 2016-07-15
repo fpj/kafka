@@ -36,7 +36,30 @@ import org.apache.kafka.common.TopicPartition;
 public interface Producer<K, V> extends Closeable {
 
     /**
-     * Recovers the state of a given Producer ID if the pid object
+     * A commit id is an identifier that is specified by the application
+     * that enables producer to:
+     *      - Deduplicate messages sent to a topic partition
+     *      - Identify and recover incomplete commits
+     *
+     * A commit corresponds to a set of messages that need to
+     * be produced atomically, all or none.
+     *
+     * The first time an application starts a producer with a given commit
+     * id, the producer needs to set it up so that Kafka can deduplicate
+     * and recover commits. The setupCid call only needs to be invoked once
+     * for a given commit id. The one exception to this rule is when the
+     * commit id expires. Brokers timeout commit ids due to inactivity
+     * and once it expires, the commit id is no longer valid unless setupCid
+     * is called again. The guarantees of deduplication and atomicity no
+     * longer hold across calls to setupCid for the same commit id.
+     *
+     * @param cb A completion callback for this setup call.
+     * @return A future for the result of setting up a commit id.
+     */
+    public Future<Void> setupCid(CompletionCallback<Void> cb);
+
+    /**
+     * Recover the state of a given Producer ID if the pid object
      * is not null. If it is null, then assigns a new identifier.
      *
      * The producer identifier enables the producer instance to
@@ -50,14 +73,28 @@ public interface Producer<K, V> extends Closeable {
      * method with the appropriate pid before resuming its regular
      * execution.
      *
-     * @param pid Enables the producer to recover any necessary
-     *                state to resume from a consistent state.
      * @param cb A callback to notify the application that recovery
      *           has finished.
-     * @return A future that eventually returns and updated
-     *         ProducerIdentifier instance.
+     * @return A future that eventually returns the result of recovery.
      */
-    public Future<String> initPid(String pid, CompletionCallback<Void> cb);
+    public Future<Void> recoverCid(CompletionCallback<Void> cb);
+
+
+    /**
+     * Make a commit id invalid and removes any internal metadata
+     * associated to this commit id. This call gracefully makes the
+     * commit id invalid. If this call is never made for a given
+     * commit id, brokers invalidate this commit id once it times
+     * out. A commit id times out for a given topic partition once
+     * a time out period has elapsed and no message has been produced
+     * under that commit id.
+     *
+     * @param cb A callback to notify the application the result of
+     *           closing this commit id
+     * @return A future that eventually returns the result of
+     */
+    public Future<Void> closeCid(CompletionCallback<Void> cb);
+
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
