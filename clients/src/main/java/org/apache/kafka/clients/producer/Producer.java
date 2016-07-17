@@ -17,6 +17,7 @@
 package org.apache.kafka.clients.producer;
 
 import java.io.Closeable;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -136,6 +137,20 @@ public interface Producer<K, V> extends Closeable {
      * @return A future to indicate when the operation completes.
      */
     public Future<Void> abortCommit(CompletionCallback<Void> callback);
+
+    /**
+     * Some applications might want to have the offset range of committed sets.
+     * This call returns an iterable that enables the application to iterate
+     * over the commits. It starts with the last successful commit and proceeds
+     * backwards. Note that most applications will only need the latest, but we
+     * offer the possibility of iterating backwards for completeness.
+     *
+     * The use of this method is optional when using commits with an application.
+     *
+     * @return An iterable that enables an application to iterate over the
+     *         commit ranges.
+     */
+    public Future<Iterable<Map<TopicPartition, SimpleImmutableEntry<Long, Long>>>> readCommitOffsetRanges();
 
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
