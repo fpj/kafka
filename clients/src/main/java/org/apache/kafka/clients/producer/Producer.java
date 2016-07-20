@@ -17,7 +17,6 @@
 package org.apache.kafka.clients.producer;
 
 import java.io.Closeable;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -26,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.MetricName;
-import org.apache.kafka.common.TopicPartition;
 
 
 /**
