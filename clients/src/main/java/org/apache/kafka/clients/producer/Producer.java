@@ -37,8 +37,8 @@ import org.apache.kafka.common.TopicPartition;
 public interface Producer<K, V> extends Closeable {
 
     /**
-     * A commit id is an identifier that is specified by the application
-     * that enables producer to:
+     * A producer id is an identifier that Kafka assigns to enable the
+     * producer to:
      *      - Deduplicate messages sent to a topic partition
      *      - Identify and recover incomplete commits
      *
@@ -47,56 +47,34 @@ public interface Producer<K, V> extends Closeable {
      *
      * The first time an application starts a producer with a given commit
      * id, the producer needs to set it up so that Kafka can deduplicate
-     * and recover commits. The setupCid call only needs to be invoked once
-     * for a given commit id. The one exception to this rule is when the
-     * commit id expires. Brokers timeout commit ids due to inactivity
-     * and once it expires, the commit id is no longer valid unless setupCid
-     * is called again. The guarantees of deduplication and atomicity no
-     * longer hold across calls to setupCid for the same commit id.
+     * and recover commits. The setupPid call only needs to be invoked once
+     * to obtain a new producer id. Once the application obtains a producer
+     * id, it should user the recoverPid call to complete an incomplete
+     * commit.
      *
      * @param cb A completion callback for this setup call.
-     * @return A future for the result of setting up a commit id.
+     * @return A future for the result of setting up a producer id, the
+     *         value returned is a newly allocated producer id.
      */
-    public Future<Void> setupCid(CompletionCallback<Void> cb);
+    public Future<String> newPid(CompletionCallback<Void> cb);
 
     /**
-     * Recover the state of a given Producer ID if the pid object
-     * is not null. If it is null, then assigns a new identifier.
-     *
-     * The producer identifier enables the producer instance to
-     * recover all necessary state to both deduplicate messages
-     * and finish incomplete commits. We can have an incomplete
-     * commit in the case the application has crashed and needs
-     * to restart.
+     * Recover the state of a given Producer ID the producer identifier
+     * enables the producer instance to recover all necessary state to
+     * both deduplicate messages and finish incomplete commits. We can
+     * have an incomplete commit in the case the application has crashed
+     * and needs to restart.
      *
      * In the case the application is interested in the only-once
      * guarantee and it has pending commits, it must call this
-     * method with the appropriate pid before resuming its regular
-     * execution.
+     * method with the appropriate producer ID before resuming
+     * its regular execution.
      *
      * @param cb A callback to notify the application that recovery
      *           has finished.
      * @return A future that eventually returns the result of recovery.
      */
-    public Future<Void> recoverCid(CompletionCallback<Void> cb);
-
-
-    /**
-     * Make a commit id invalid and removes any internal metadata
-     * associated to this commit id. This call gracefully makes the
-     * commit id invalid. If this call is never made for a given
-     * commit id, brokers invalidate this commit id once it times
-     * out. A commit id times out for a given topic partition once
-     * a time out period has elapsed and no message has been produced
-     * under that commit id.
-     *
-     * @param cb A callback to notify the application the result of
-     *           closing this commit id
-     * @return A future that eventually returns the result of invalidating
-     *         the commit id.
-     */
-    public Future<Void> invalidateCid(CompletionCallback<Void> cb);
-
+    public Future<Void> recoverPid(String pid, CompletionCallback<Void> cb);
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
@@ -138,20 +116,6 @@ public interface Producer<K, V> extends Closeable {
      * @return A future to indicate when the operation completes.
      */
     public Future<Void> abortCommit(CompletionCallback<Void> callback);
-
-    /**
-     * Some applications might want to have the offset range of committed sets.
-     * This call returns an iterable that enables the application to iterate
-     * over the commits. It starts with the last successful commit and proceeds
-     * backwards. Note that most applications will only need the latest, but we
-     * offer the possibility of iterating backwards for completeness.
-     *
-     * The use of this method is optional when using commits with an application.
-     *
-     * @return An iterable that enables an application to iterate over the
-     *         commit ranges.
-     */
-    public Future<Iterable<Map<TopicPartition, SimpleImmutableEntry<Long, Long>>>> readCommitOffsetRanges();
 
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
