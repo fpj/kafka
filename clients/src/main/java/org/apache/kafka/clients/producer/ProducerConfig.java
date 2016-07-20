@@ -217,6 +217,14 @@ public class ProducerConfig extends AbstractConfig {
                                                         + "Implementing the <code>ProducerInterceptor</code> interface allows you to intercept (and possibly mutate) the records "
                                                         + "received by the producer before they are published to the Kafka cluster. By default, there are no interceptors.";
 
+    /** <code>commit.id</code> */
+    public static final String COMMIT_ID_CONFIG = "commit.id";
+    public static final String COMMIT_ID_DOC = "An identifier for the commit API."
+                                                + "For exactly-once semantics, it is important to provide a commit ID that Kafka uses to identify incomplete commit blocks. "
+                                                + "An incomplete commit block is one that is neither committed nor aborted because the KafkaProducer instance crashed. "
+                                                + "Upon initializing a KafkaProducer instance with a given commit ID, the instance recovers any outstanding commit block "
+                                                + "by rolling the commit either forward or backward.";
+
     static {
         CONFIG = new ConfigDef().define(BOOTSTRAP_SERVERS_CONFIG, Type.LIST, Importance.HIGH, CommonClientConfigs.BOOTSTRAP_SERVERS_DOC)
                                 .define(BUFFER_MEMORY_CONFIG, Type.LONG, 32 * 1024 * 1024L, atLeast(0L), Importance.HIGH, BUFFER_MEMORY_DOC)
@@ -299,6 +307,12 @@ public class ProducerConfig extends AbstractConfig {
                                         null,
                                         Importance.LOW,
                                         INTERCEPTOR_CLASSES_DOC)
+                                .define(COMMIT_ID_CONFIG,
+                                        Type.STRING,
+                                        null,
+                                        Importance.HIGH,
+                                        COMMIT_ID_DOC
+                                        )
 
                                 // security support
                                 .define(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,

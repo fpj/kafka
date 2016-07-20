@@ -92,9 +92,10 @@ public interface Producer<K, V> extends Closeable {
      *
      * @param cb A callback to notify the application the result of
      *           closing this commit id
-     * @return A future that eventually returns the result of
+     * @return A future that eventually returns the result of invalidating
+     *         the commit id.
      */
-    public Future<Void> closeCid(CompletionCallback<Void> cb);
+    public Future<Void> invalidateCid(CompletionCallback<Void> cb);
 
 
     /**
