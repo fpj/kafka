@@ -54,7 +54,7 @@ public interface Producer<K, V> extends Closeable {
      * @return A future for the result of setting up a producer id, the
      *         value returned is a newly allocated producer id.
      */
-    public Future<String> newPid(CompletionCallback<Void> cb);
+    public Future<String> newPid(CompletionCallback<String> cb);
 
     /**
      * Recover the state of a given Producer ID the producer identifier
