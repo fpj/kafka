@@ -217,6 +217,21 @@ public class ProducerConfig extends AbstractConfig {
                                                         + "Implementing the <code>ProducerInterceptor</code> interface allows you to intercept (and possibly mutate) the records "
                                                         + "received by the producer before they are published to the Kafka cluster. By default, there are no interceptors.";
 
+    /** <code>producer.namespace</code> */
+    public static final String PRODUCER_NAMESPACE_CONFIG = "producer.namespace";
+    private static final String PRODUCER_NAMESPACE__DOC = "A namespace for producer identifiers to be used with the transaction API. The application identifier is the "
+                                                         + "concatenation of the namespace and the producer.id, e.g., mystreamsapp-task-1, where mystreamsapp "
+                                                         + "is the namespace and task-1 is the producer identifier. The total length of the application identifier is "
+                                                         + "is capped at 64 bytes";
+
+    /** <code>producer.id</code> */
+    public static final String PRODUCER_ID_CONFIG = "producer.namespace";
+    private static final String PRODUCER_ID__DOC = "A producer identifier to be used with the transaction API. The application identifier is the "
+                                                    + "concatenation of the namespace and the producer.id, e.g., mystreamsapp-task-1, where mystreamsapp "
+                                                    + "is the namespace and task-1 is the producer identifier. The total length of the application identifier is "
+                                                    + "is capped at 64 bytes";
+
+
     static {
         CONFIG = new ConfigDef().define(BOOTSTRAP_SERVERS_CONFIG, Type.LIST, Importance.HIGH, CommonClientConfigs.BOOTSTRAP_SERVERS_DOC)
                                 .define(BUFFER_MEMORY_CONFIG, Type.LONG, 32 * 1024 * 1024L, atLeast(0L), Importance.HIGH, BUFFER_MEMORY_DOC)
@@ -299,6 +314,14 @@ public class ProducerConfig extends AbstractConfig {
                                         null,
                                         Importance.LOW,
                                         INTERCEPTOR_CLASSES_DOC)
+                                .define(PRODUCER_NAMESPACE_CONFIG,
+                                        Type.STRING,
+                                        Importance.HIGH,
+                                        PRODUCER_NAMESPACE__DOC)
+                                .define(PRODUCER_ID_CONFIG,
+                                        Type.STRING,
+                                        Importance.HIGH,
+                                        PRODUCER_ID__DOC)
 
                                 // security support
                                 .define(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,

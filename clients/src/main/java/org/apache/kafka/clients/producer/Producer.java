@@ -35,44 +35,30 @@ import org.apache.kafka.common.MetricName;
 public interface Producer<K, V> extends Closeable {
 
     /**
-     * A producer id is an identifier that Kafka assigns to enable the
+     * An application id is an identifier that enables the
      * producer to:
      *      - Deduplicate messages sent to a topic partition
-     *      - Identify and recover pending transaction
+     *      - Identify and recover a pending transaction
      *
      * A transaction corresponds to a set of messages that need to
      * be produced atomically, all or none.
      *
-     * The first time an application starts a producer with a given commit
-     * id, the producer needs to set it up so that Kafka can deduplicate
-     * and recover commits. The newPid call only needs to be invoked once
-     * to obtain a new producer id. Once the application obtains a producer
-     * id, it should user the recoverPid call to complete an incomplete
-     * commit.
+     * Tha application id is a concatenation of two parts specified
+     * in the producer configuration: producer.namespace and producer.id.
+     * The namespace defines the scope of the identifier, typically the
+     * name of an application. The id defines an entity in a application,
+     * e.g., a task or worker.
+     *
+     * If there is no ongoing transaction, like with the first time
+     * the application id is used, then the producer performs no
+     * recovery. Otherwise, it needs to recover by completing the
+     * ongoing transaction.
      *
      * @param cb A completion callback for this setup call.
      * @return A future for the result of setting up a producer id, the
      *         value returned is a newly allocated producer id.
      */
-    public Future<String> newPid(CompletionCallback<String> cb);
-
-    /**
-     * Recover the state of a given Producer ID the producer identifier
-     * enables the producer instance to recover all necessary state to
-     * both deduplicate messages and finish incomplete commits. We can
-     * have an incomplete commit in the case the application has crashed
-     * and needs to restart.
-     *
-     * In the case the application is interested in the only-once
-     * guarantee and it has pending transactions, it must call this
-     * method with the appropriate producer ID before resuming
-     * its regular execution.
-     *
-     * @param cb A callback to notify the application that recovery
-     *           has finished.
-     * @return A future that eventually returns the result of recovery.
-     */
-    public Future<Void> recoverPid(String pid, CompletionCallback<Void> cb);
+    public Future<Void> initAppId(CompletionCallback<Void> cb);
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
