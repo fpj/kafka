@@ -38,14 +38,14 @@ public interface Producer<K, V> extends Closeable {
      * A producer id is an identifier that Kafka assigns to enable the
      * producer to:
      *      - Deduplicate messages sent to a topic partition
-     *      - Identify and recover incomplete commits
+     *      - Identify and recover pending transaction
      *
-     * A commit corresponds to a set of messages that need to
+     * A transaction corresponds to a set of messages that need to
      * be produced atomically, all or none.
      *
      * The first time an application starts a producer with a given commit
      * id, the producer needs to set it up so that Kafka can deduplicate
-     * and recover commits. The setupPid call only needs to be invoked once
+     * and recover commits. The newPid call only needs to be invoked once
      * to obtain a new producer id. Once the application obtains a producer
      * id, it should user the recoverPid call to complete an incomplete
      * commit.
@@ -64,7 +64,7 @@ public interface Producer<K, V> extends Closeable {
      * and needs to restart.
      *
      * In the case the application is interested in the only-once
-     * guarantee and it has pending commits, it must call this
+     * guarantee and it has pending transactions, it must call this
      * method with the appropriate producer ID before resuming
      * its regular execution.
      *
@@ -89,13 +89,13 @@ public interface Producer<K, V> extends Closeable {
 
     /**
      * Start a new set of messages to commit. All calls to send through this producer instance
-     * are considered to be part of this commit set. We close the commit set once the application
-     * calls endCommit.
+     * are considered to be part of this transaction. We end the transaction once the application
+     * calls endTxn.
      *
      * @param callback Invoked when the initialization of the batch completes
      * @return A future to indicate when the operations is complete.
      */
-    public Future<Void> beginCommit(CompletionCallback<Void> callback);
+    public Future<Void> beginTxn(CompletionCallback<Void> callback);
 
     /**
      * Commit the last set of produced messages.
@@ -103,7 +103,7 @@ public interface Producer<K, V> extends Closeable {
      * @param callback Invoked when the commit completes
      * @return A future to indicate when the operations completes.
      */
-    public Future<Void> endCommit(CompletionCallback<Void> callback);
+    public Future<Void> endTxn(CompletionCallback<Void> callback);
 
     /**
      * Aborts the current set of messages to commit. The messages that have been
@@ -113,7 +113,7 @@ public interface Producer<K, V> extends Closeable {
      * @param callback Invoked when the abort operation completes
      * @return A future to indicate when the operation completes.
      */
-    public Future<Void> abortCommit(CompletionCallback<Void> callback);
+    public Future<Void> abortTxn(CompletionCallback<Void> callback);
 
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
