@@ -15,20 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.producer;
+package org.apache.kafka.streams.processor.internals;
 
 
 import org.apache.kafka.clients.producer.CompletionCallback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.internals.TxnListener;
+import org.apache.kafka.common.serialization.Serializer;
 
+import java.util.Map;
 import java.util.concurrent.Future;
 
-public class StreamsProducer extends KafkaProducer {
-    private TxnListener listener;
+class StreamsProducer<K, V> extends KafkaProducer<K, V> {
 
-    public StreamsProducer(TxnListener listener){
-        this.listener = listener;
+    StreamsProducer(Map<String, Object> configs,
+                    Serializer<K> keySerializer,
+                    Serializer<V> valueSerializer,
+                    TxnListener listener) {
+        super(configs, keySerializer, valueSerializer);
     }
 
     /**
@@ -39,7 +43,7 @@ public class StreamsProducer extends KafkaProducer {
      * @param callback Invoked when the initialization of the batch completes
      * @return A future to indicate when the operations is complete.
      */
-    public Future<Void> beginTxn(CompletionCallback<Void> callback) {
+    Future<Void> beginTxn(CompletionCallback<Void> callback) {
         return super.beginTxn(callback);
     }
 
@@ -49,7 +53,7 @@ public class StreamsProducer extends KafkaProducer {
      * @param callback Invoked when the commit completes
      * @return A future to indicate when the operations completes.
      */
-    public Future<Void> endTxn(byte[] metadata, CompletionCallback<Void> callback) {
+    Future<Void> endTxn(byte[] metadata, CompletionCallback<Void> callback) {
         return super.endTxn(metadata, callback);
     }
 
@@ -61,7 +65,7 @@ public class StreamsProducer extends KafkaProducer {
      * @param callback Invoked when the abort operation completes
      * @return A future to indicate when the operation completes.
      */
-    public Future<Void> abortTxn(CompletionCallback<Void> callback) {
+    Future<Void> abortTxn(CompletionCallback<Void> callback) {
         return super.abortTxn(callback);
     }
 }

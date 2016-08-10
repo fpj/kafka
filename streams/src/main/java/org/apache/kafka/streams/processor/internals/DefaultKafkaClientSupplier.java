@@ -30,7 +30,7 @@ import org.apache.kafka.streams.KafkaClientSupplier;
 public class DefaultKafkaClientSupplier implements KafkaClientSupplier {
     @Override
     public Producer<byte[], byte[]> getProducer(Map<String, Object> config) {
-        return new KafkaProducer<>(config, new ByteArraySerializer(), new ByteArraySerializer());
+        return new StreamsProducer<>(config, new ByteArraySerializer(), new ByteArraySerializer());
     }
 
     @Override
