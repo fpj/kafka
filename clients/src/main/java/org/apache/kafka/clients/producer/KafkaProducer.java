@@ -554,6 +554,20 @@ public class KafkaProducer<K, V> implements Producer<K, V> {
                                               " configuration.");
     }
 
+
+    /**
+     * Protected version of endTxn that enables us to add metadata while preparing a txn to be committed.
+     * Specifically, we write this metadata along with a prepare message to the txn log (via the coordinator)
+     * to guarantee that the metadata is available to the preCommit/postCommit calls of TxnListener upon
+     * recovery.
+     *
+     * We use this call in streams to commit consumed offsets.
+     *
+     * @param metadata
+     * @param callback
+     */
+    protected Future<Void> endTxn(byte[] metadata, CompletionCallback<Void> callback) {}
+
     /**
      * Invoking this method makes all buffered records immediately available to send (even if <code>linger.ms</code> is
      * greater than 0) and blocks on the completion of the requests associated with these records. The post-condition
