@@ -17,7 +17,7 @@
 package org.apache.kafka.clients.producer;
 
 
-public interface CompletionCallback<R> {
+public interface TxnCallback<R> {
     /**
      * Invoked when the commit operation completes. In the case of
      * an error, returns an exception.
