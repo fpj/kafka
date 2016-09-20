@@ -35,8 +35,11 @@ import org.apache.kafka.common.MetricName;
 public interface Producer<K, V> extends Closeable {
 
     /**
-     * An application id is an identifier that enables the
-     * producer to:
+     * Initializes the producer. Currently, it recovers the last
+     * transaction for the configured application id. If no application
+     * id is configured, then this method returns an error code.
+     *
+     * The application id enables the producer to:
      *      - Deduplicate messages sent to a topic partition
      *      - Identify and recover a pending transaction
      *
@@ -58,7 +61,7 @@ public interface Producer<K, V> extends Closeable {
      * @return A future for the result of setting up a producer id, the
      *         value returned is a newly allocated producer id.
      */
-    public Future<Void> initAppId(CompletionCallback<Void> cb);
+    public Future<Void> init(TxnCallback<Void> cb);
 
     /**
      * Send the given record asynchronously and return a future which will eventually contain the response information.
@@ -81,7 +84,7 @@ public interface Producer<K, V> extends Closeable {
      * @param callback Invoked when the initialization of the batch completes
      * @return A future to indicate when the operations is complete.
      */
-    public Future<Void> beginTxn(CompletionCallback<Void> callback);
+    public Future<Void> beginTxn(TxnCallback<Void> callback);
 
     /**
      * Commit the last set of produced messages.
@@ -89,7 +92,7 @@ public interface Producer<K, V> extends Closeable {
      * @param callback Invoked when the commit completes
      * @return A future to indicate when the operations completes.
      */
-    public Future<Void> endTxn(CompletionCallback<Void> callback);
+    public Future<Void> endTxn(TxnCallback<Void> callback);
 
     /**
      * Aborts the current set of messages to commit. The messages that have been
@@ -99,7 +102,7 @@ public interface Producer<K, V> extends Closeable {
      * @param callback Invoked when the abort operation completes
      * @return A future to indicate when the operation completes.
      */
-    public Future<Void> abortTxn(CompletionCallback<Void> callback);
+    public Future<Void> abortTxn(TxnCallback<Void> callback);
 
     /**
      * Flush any accumulated records from the producer. Blocks until all sends are complete.
