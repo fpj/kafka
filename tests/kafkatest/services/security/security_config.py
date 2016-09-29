@@ -219,7 +219,7 @@ class SecurityConfig(TemplateRenderer):
         if self.has_sasl:
             return "\"-Djavax.net.debug=all -Djava.security.auth.login.config=%s -Djava.security.krb5.conf=%s\"" % (SecurityConfig.JAAS_CONF_PATH, SecurityConfig.KRB5CONF_PATH)
         else:
-            return "-Djavax.net.debug=all"
+            return "\"-Djavax.net.debug=all\""
 
     def props(self, prefix=''):
         """
