@@ -217,9 +217,9 @@ class SecurityConfig(TemplateRenderer):
     @property
     def kafka_opts(self):
         if self.has_sasl:
-            return "\" -Djavax.net.debug=all -Djava.security.auth.login.config=%s -Djava.security.krb5.conf=%s\"" % (SecurityConfig.JAAS_CONF_PATH, SecurityConfig.KRB5CONF_PATH)
+            return "\" -Djavax.net.debug=ssl:handshake -Djava.security.auth.login.config=%s -Djava.security.krb5.conf=%s\"" % (SecurityConfig.JAAS_CONF_PATH, SecurityConfig.KRB5CONF_PATH)
         else:
-            return "\" -Djavax.net.debug=all \""
+            return "\" -Djavax.net.debug=ssl:handshake \""
 
     def props(self, prefix=''):
         """
