@@ -50,7 +50,8 @@ def is_int(msg):
     try:
         return int(msg)
     except ValueError:
-        raise Exception("Unexpected message format (expected an integer). Message: %s" % (msg))
+        return 0
+        #raise Exception("Unexpected message format (expected an integer). Message: %s" % (msg))
 
 
 def is_int_with_prefix(msg):
