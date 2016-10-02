@@ -252,7 +252,10 @@ class ConsoleConsumer(KafkaPathResolverMixin, JmxMixin, BackgroundThreadService)
                     self.clean_shutdown_nodes.add(node)
                 else:
                     if self.message_validator is not None:
-                        msg = self.message_validator(msg)
+                        try:
+                            msg = self.message_validator(msg)
+                        except Exception, e:
+                            msg = None
                     if msg is not None:
                         self.messages_consumed[idx].append(msg)
 
