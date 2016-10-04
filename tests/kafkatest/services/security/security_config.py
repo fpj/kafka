@@ -22,7 +22,6 @@ from kafkatest.services.security.minikdc import MiniKdc
 import itertools
 
 class SslStores(object):
-    self.initialized = False
     def __init__(self):
         self.ca_crt_path = "/tmp/test.ca.crt"
         self.ca_jks_path = "/tmp/test.ca.jks"
@@ -61,9 +60,7 @@ class SslStores(object):
         The generated certificate has the node's hostname as a DNS SubjectAlternativeName.
         """
 
-        try:
-            self.initialized
-        except NameError:
+        if hasattr(self, 'initialized') is False:
             raise Exception("Object hasn't been initialized")
         ks_dir = mkdtemp(dir="/tmp")
         ks_path = os.path.join(ks_dir, "test.keystore.jks")
