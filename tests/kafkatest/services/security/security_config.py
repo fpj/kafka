@@ -22,6 +22,7 @@ from kafkatest.services.security.minikdc import MiniKdc
 import itertools
 
 class SslStores(object):
+    self.initialized = False
     def __init__(self):
         self.ca_crt_path = "/tmp/test.ca.crt"
         self.ca_jks_path = "/tmp/test.ca.jks"
@@ -37,6 +38,7 @@ class SslStores(object):
         for file in [self.ca_crt_path, self.ca_jks_path, self.truststore_path]:
             if os.path.exists(file):
                 os.remove(file)
+        self.initialized = True
 
     def generate_ca(self):
         """
@@ -59,16 +61,20 @@ class SslStores(object):
         The generated certificate has the node's hostname as a DNS SubjectAlternativeName.
         """
 
+        try:
+            self.initialized
+        except NameError:
+            raise Exception("Object hasn't been initialized")
         ks_dir = mkdtemp(dir="/tmp")
         ks_path = os.path.join(ks_dir, "test.keystore.jks")
         csr_path = os.path.join(ks_dir, "test.kafka.csr")
         crt_path = os.path.join(ks_dir, "test.kafka.crt")
 
-	self.runcmd("keytool -genkeypair -alias kafka -keyalg RSA -keysize 2048 -keystore %s -storepass %s -keypass %s -dname CN=systemtest -ext SAN=DNS:%s -startdate %s" % (ks_path, self.keystore_passwd, self.key_passwd, self.hostname(node), self.startdate))
-	self.runcmd("keytool -certreq -keystore %s -storepass %s -keypass %s -alias kafka -file %s" % (ks_path, self.keystore_passwd, self.key_passwd, csr_path))
-	self.runcmd("keytool -gencert -keystore %s -storepass %s -alias ca -infile %s -outfile %s -dname CN=systemtest -ext SAN=DNS:%s -startdate %s" % (self.ca_jks_path, self.ca_passwd, csr_path, crt_path, self.hostname(node), self.startdate))
-	self.runcmd("keytool -importcert -keystore %s -storepass %s -alias ca -file %s -noprompt" % (ks_path, self.keystore_passwd, self.ca_crt_path))
-	self.runcmd("keytool -importcert -keystore %s -storepass %s -keypass %s -alias kafka -file %s -noprompt" % (ks_path, self.keystore_passwd, self.key_passwd, crt_path))
+        self.runcmd("keytool -genkeypair -alias kafka -keyalg RSA -keysize 2048 -keystore %s -storepass %s -keypass %s -dname CN=systemtest -ext SAN=DNS:%s -startdate %s" % (ks_path, self.keystore_passwd, self.key_passwd, self.hostname(node), self.startdate))
+        self.runcmd("keytool -certreq -keystore %s -storepass %s -keypass %s -alias kafka -file %s" % (ks_path, self.keystore_passwd, self.key_passwd, csr_path))
+        self.runcmd("keytool -gencert -keystore %s -storepass %s -alias ca -infile %s -outfile %s -dname CN=systemtest -ext SAN=DNS:%s -startdate %s" % (self.ca_jks_path, self.ca_passwd, csr_path, crt_path, self.hostname(node), self.startdate))
+        self.runcmd("keytool -importcert -keystore %s -storepass %s -alias ca -file %s -noprompt" % (ks_path, self.keystore_passwd, self.ca_crt_path))
+        self.runcmd("keytool -importcert -keystore %s -storepass %s -keypass %s -alias kafka -file %s -noprompt" % (ks_path, self.keystore_passwd, self.key_passwd, crt_path))
         node.account.scp_to(ks_path, SecurityConfig.KEYSTORE_PATH)
         rmtree(ks_dir)
 
